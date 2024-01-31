@@ -1,0 +1,12 @@
+{
+    "name": "my-quickjs-addon",
+    "version": "1.0.0",
+    "description": "Node.js addon using QuickJS",
+    "scripts": {
+      "build": "node-gyp configure build"
+    },
+    "gypfile": true,
+    "dependencies": {
+      "node-addon-api": "^3.0.0"
+    }
+  }
