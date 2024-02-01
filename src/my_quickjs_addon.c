@@ -4,7 +4,7 @@
 #include "quickjs.h" 
 
 static JSValue evaluateJavaScript(JSContext *ctx) {
-    const char *code = "function multiply(a, b) { return a * b; } \n const d = new Date();\n let result = multiply(35, 4); result;";
+    const char *code = "function multiply(a, b) { return a * b; } \n const d = new Date();\n let result = multiply(30, 4); result;";
     return JS_Eval(ctx, code, strlen(code), "<input>", JS_EVAL_FLAG_STRICT);
 }
 

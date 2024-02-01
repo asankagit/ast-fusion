@@ -1,0 +1,16 @@
+# Ignore built files
+/build/
+/compiled/
+/out/
+
+# Ignore dependencies
+node_modules/
+
+# Ignore npm-debug.log file
+npm-debug.log
+
+# Ignore Visual Studio Code workspace settings
+.vscode/
+
+# Ignore macOS file system metadata
+.DS_Store
