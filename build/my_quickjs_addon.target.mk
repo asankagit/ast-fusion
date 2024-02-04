@@ -133,7 +133,7 @@ LDFLAGS_Release := \
 	-m64
 
 LIBS := \
-	-L/home/asanka/Documents/my-quickjs-addon/src/quickjs \
+	-L~/Documents/my-quickjs-addon/src/quickjs \
 	-lquickjs \
 	-lm
 

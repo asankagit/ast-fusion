@@ -3,10 +3,11 @@
     "version": "1.0.0",
     "description": "Node.js addon using QuickJS",
     "scripts": {
-      "build": "node-gyp configure build"
+        "build": "node-gyp configure build"
     },
     "gypfile": true,
     "dependencies": {
-      "node-addon-api": "^3.0.0"
+        "bindings": "^1.5.0",
+        "node-addon-api": "^3.2.1"
     }
-  }
+}
