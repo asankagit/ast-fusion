@@ -1,3 +1,4 @@
+const {makeAPICall} = require('./host-functions/apiCall');
 const myQuickJSAddon = require('bindings')('my_quickjs_addon');
 
 
@@ -13,7 +14,28 @@ function myCallback(x) {
     return 'Hello from JavaScript!';
 }
 
+function AddTwo(num) {
+    console.log({ num})
+    return num + 23.23 +"HI";
+}
+
+global.AddTwo = AddTwo;
 // Call the C function from the native addon
 const cb_result = myQuickJSAddon.callBackFunction(myCallback);
 
 console.log('Result from C:', JSON.stringify(cb_result));
+
+
+// Call the C/C++ function from Node.js
+// console.log({ module }, module.children[0])
+const apiResponse =  myQuickJSAddon.callNodeFunction("https://api.example.com/data");
+
+// console.log('gloabl>',global)
+module.require = makeAPICall
+console.log({ apiResponse })
+// Handle the API response
+// apiResponse.then(response => {
+//     console.log('API Response:', response);
+// }).catch(error => {
+//     console.error('Error:', error);
+// });

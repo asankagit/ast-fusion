@@ -260,13 +260,76 @@ napi_value CallBackFunction(napi_env env, napi_callback_info info) {
 }
 
 
+static napiValueToString(napi_value makeAPICallFunction, napi_env env) {
+    //////////////////////////////////////////
+        napi_status status;
+        napi_value stringResult;
+        status = napi_coerce_to_string(env, makeAPICallFunction, &stringResult);
+        if (status != napi_ok) {
+            // Handle error
+        }
 
+        size_t strLength;
+        status = napi_get_value_string_utf8(env, stringResult, NULL, 0, &strLength);
+        if (status != napi_ok) {
+            // Handle error
+        }
+
+        // Allocate memory for the string
+        char* str = NULL;
+        str = (char*)malloc((strLength + 1) * sizeof(char));
+        if (str == NULL) {
+            // Handle memory allocation failure
+        }
+
+        status = napi_get_value_string_utf8(env, stringResult, str, strLength + 1, NULL);
+        if (status != napi_ok) {
+            // Handle error
+        }
+
+        // Print the string
+        printf("Value of makeAPICallFunction: %s\n", str);
+
+        // Free the allocated memory
+        free(str);
+        //////////////////////////////////////////
+}
+
+
+napi_value CallNodeFunction(napi_env env, napi_callback_info info) {
+    // Get the function named "AddTwo" on the global object
+    napi_value global, add_two, arg;
+    napi_status status = napi_get_global(env, &global);
+    if (status != napi_ok) return;
+
+    status = napi_get_named_property(env, global, "AddTwo", &add_two);
+    if (status != napi_ok) return;
+
+    // const arg = 1337
+    status = napi_create_int32(env, 1337, &arg);
+    if (status != napi_ok) return;
+
+    napi_value* argv = &arg;
+    size_t argc = 1;
+
+    // AddTwo(arg);
+    napi_value return_val;
+    status = napi_call_function(env, global, add_two, argc, argv, &return_val);
+    if (status != napi_ok) return;
+
+    // Convert the result back to a native type
+    int32_t result;
+    status = napi_get_value_int32(env, return_val, &result);
+    napiValueToString(return_val, env);
+
+    if (status != napi_ok) return;
+}
 
 
 napi_value Init(napi_env env, napi_value exports)
 {
     napi_status status;
-    napi_value fn, processArgs, callBackfn;
+    napi_value fn, processArgs, callBackfn, callNodefn;
 
     status = napi_create_function(env, NULL, 0, MyFunction, NULL, &fn);
     if (status != napi_ok)
@@ -306,6 +369,13 @@ napi_value Init(napi_env env, napi_value exports)
     {
         napi_throw_error(env, NULL, "Failed to set named property");
     }
+
+
+    status = napi_create_function(env, NULL, 0, CallNodeFunction, NULL, &callNodefn);
+    if (status != napi_ok) return NULL;
+
+    status = napi_set_named_property(env, exports, "callNodeFunction", callNodefn);
+    if (status != napi_ok) return NULL;
     return exports;
 }
 
