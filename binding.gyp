@@ -11,7 +11,6 @@
       ],
       "include_dirs": [
         "include",
-        # "/home/asanka/Documents/ast-fusion/include"
       ],
       "libraries": [
         "-L<(libquickjs_path)",
