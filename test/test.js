@@ -1,5 +1,5 @@
 const {makeAPICall} = require('./host-functions/apiCall');
-const myQuickJSAddon = require('bindings')('my_quickjs_addon');
+const myQuickJSAddon = require('bindings')('ast-fusion');
 
 
 console.log(myQuickJSAddon.myFunction("_native_function", "20"));

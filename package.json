@@ -1,9 +1,9 @@
 {
-    "name": "my-quickjs-addon",
+    "name": "ast-fusion-addon",
     "version": "1.0.0",
     "description": "Node.js addon using QuickJS",
     "scripts": {
-        "build": "node-gyp configure build"
+        "build": "sh run.sh"
     },
     "gypfile": true,
     "dependencies": {

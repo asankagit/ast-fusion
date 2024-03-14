@@ -1,1 +1,0 @@
-cmd_Release/my_quickjs_addon.node := ln -f "Release/obj.target/my_quickjs_addon.node" "Release/my_quickjs_addon.node" 2>/dev/null || (rm -rf "Release/my_quickjs_addon.node" && cp -af "Release/obj.target/my_quickjs_addon.node" "Release/my_quickjs_addon.node")

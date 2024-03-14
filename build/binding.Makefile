@@ -3,4 +3,4 @@
 export builddir_name ?= ./build/.
 .PHONY: all
 all:
-	$(MAKE) my_quickjs_addon
+	$(MAKE) ast-fusion

@@ -1,17 +1,17 @@
 {
   "variables": {
-    "libquickjs_path": "<!(echo \"${LIBQUICKJS_PATH}\")"
+    "libquickjs_path": "$$LIBQUICKJS_PATH"
   },
   "targets": [
     {
-      "target_name": "my_quickjs_addon",
+      "target_name": "ast-fusion",
       "sources": [
         "src/my_quickjs_addon.c",
         # "src/quickjs/*.c"
       ],
       "include_dirs": [
         "include",
-        # "/home/asanka/Documents/my-quickjs-addon/src/quickjs"
+        # "/home/asanka/Documents/ast-fusion/include"
       ],
       "libraries": [
         "-L<(libquickjs_path)",
