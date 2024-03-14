@@ -15,3 +15,5 @@ npm-debug.log
 # Ignore macOS file system metadata
 .DS_Store
 # src/quickjs
+build/
+
