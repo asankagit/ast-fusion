@@ -30,9 +30,10 @@ console.log('Result from C:', JSON.stringify(cb_result));
 // console.log({ module }, module.children[0])
 const apiResponse =  myQuickJSAddon.callNodeFunction("https://api.example.com/data");
 
-// console.log('gloabl>',global)
-module.require = makeAPICall
-console.log({ apiResponse })
+
+// // console.log('gloabl>',global)
+// module.require = makeAPICall
+// console.log({ apiResponse })
 // Handle the API response
 // apiResponse.then(response => {
 //     console.log('API Response:', response);

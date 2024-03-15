@@ -4,9 +4,22 @@
 #include "quickjs.h"
 #include <stdlib.h>
 
+// Native C function that will be called from JavaScript
+static JSValue js_native_addon(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
+    // Example: Print arguments received by the function
+    for (int i = 0; i < argc; i++) {
+        const char *str = JS_ToCString(ctx, argv[i]);
+        printf("Argument %d: %s\n", i + 1, str);
+        JS_FreeCString(ctx, str);
+    }
+
+    // Example: Return a value (you can modify this according to your requirements)
+    return JS_NewInt32(ctx, argc); // Return number of arguments received
+}
+
 static JSValue evaluateJavaScript(JSContext *ctx)
 {
-    const char *code = "function multiply(a, b) { return a * b; } \n const d = new Date();\n let result = multiply(32, 4); result;";
+    const char *code = "function multiply(a, b) { return a * b; } \n const d = new Date();\n let result = multiply(32, 4); js_native_addon(result);result;";
     return JS_Eval(ctx, code, strlen(code), "<input>", JS_EVAL_FLAG_STRICT);
 }
 
@@ -59,9 +72,22 @@ napi_value MyFunction(napi_env env, napi_callback_info info)
     // Create QuickJS runtime and context
     JSRuntime *rt = JS_NewRuntime();
     JSContext *ctx = JS_NewContext(rt);
+    JSValue global_obj = JS_GetGlobalObject(ctx);
+
+
+    // Register the native C function as a JavaScript function
+    JSValue js_fun_reg = JS_NewCFunction(ctx, js_native_addon, "js_native_addon", 1);
+    JS_DupValue(ctx, js_fun_reg);
+    // Set the registered JavaScript function as a property of the global object
+    JS_SetPropertyStr(ctx, global_obj, "js_native_addon", js_fun_reg);
+
+    // Release the unnecessary values
+    JS_FreeValue(ctx, js_fun_reg);
+    JS_FreeValue(ctx, global_obj); 
 
     // Evaluate JavaScript code
     JSValue jsResult = evaluateJavaScript(ctx);
+  
 
     // Handle result and convert to N-API value
     // For simplicity, just create a string with the result
@@ -149,97 +175,8 @@ napi_value CreateJsObject(napi_env env) {
 }
 
 
-// napi_value CallJavaScriptCallback(napi_env env, napi_value jsCallback, napi_value* args, size_t argCount, napi_value* result) {
-//     // Call the JavaScript callback function with the specified arguments
-//     napi_call_function(env, NULL, jsCallback, argCount, args, result);
-// }
-/*
-napi_value CallJavaScriptCallback(napi_env env, napi_value callback, const char* cArgs) {
-    napi_value global;
-    napi_get_global(env, &global);
-
-    napi_value jsCallback;
-    napi_get_reference_value(env, callback, &jsCallback);
-
-    napi_value jsArgs;
-    napi_create_string_utf8(env, cArgs, NAPI_AUTO_LENGTH, &jsArgs);
-
-    napi_value result;
-    napi_call_function(env, global, jsCallback, 1, &jsArgs, &result);
-
-    // Check if the call was successful
-    if (result == NULL) {
-        // Handle error
-        return NULL;
-    }
-
-    // Convert the result to a string
-    char buffer[512]; // Adjust the buffer size as needed
-    size_t length;
-    napi_get_value_string_utf8(env, result, buffer, sizeof(buffer), &length);
-
-    // Print the result
-    printf("Result from JavaScript: %s\n", buffer);
-
-    return result;
-}
-napi_value CallBackFunction(napi_env env, napi_callback_info info)
-{
-    napi_value result = CreateJsObject(env);
-    return result;
-}
-*/
-
-// Define someData variable outside the callBackFunction
-// napi_value someData;
-
 napi_value CallBackFunction(napi_env env, napi_callback_info info) {
-    // // Get the callback info
-    // size_t argc = 1; // Assuming one argument (the callback)
-    // napi_value argv[1];
-    // napi_get_cb_info(env, info, &argc, argv, NULL, NULL);
-
-    // // Ensure the correct number of arguments
-    // if (argc < 1) {
-    //     napi_throw_error(env, NULL, "Expected one argument");
-    //     return NULL;
-    // }
-
-    // // Extract the callback function (jsCallback)
-    // napi_value jsCallback = argv[0];
-
-    // // Call the JavaScript callback function with an argument
-    // napi_value arg;
-    // napi_create_int32(env, 42, &arg); // Example argument, you can replace it with your desired value
-
-    // napi_value result_;
-    // napi_call_function(env, NULL, jsCallback, 1, &arg, &result_);
-
-    // // print callback funtion
-    // size_t bufferLength = 1024; // Adjust buffer size as needed
-    // char buffer[bufferLength];
-    // size_t written;
-
-    // napi_get_value_string_utf8(env, jsCallback, buffer, bufferLength, &written);
-
-    // printf("JavaScript callback function: %s\n", buffer);
-
-    // //end callback function print
-
-    // // Call the JavaScript callback using CallJavaScriptCallback
-    // napi_value result = CallJavaScriptCallback(env, jsCallback, &arg);
-
-    
-    // // Handle the result if needed
-    // if (result == NULL) {
-    //     napi_throw_error(env, NULL, "Failed to execute JavaScript callback");
-    //     return NULL;
-    // }
-
-    // // Return the result to JavaScript
-    // return result;
-    
-     size_t argc = 1; // Expecting one argument
+    size_t argc = 1; // Expecting one argument
     napi_value argv[1];
     napi_get_cb_info(env, info, &argc, argv, NULL, NULL);
 
