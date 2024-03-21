@@ -2,7 +2,12 @@ const {makeAPICall} = require('./host-functions/apiCall');
 const myQuickJSAddon = require('bindings')('ast-fusion');
 
 
-console.log(myQuickJSAddon.myFunction("_native_function", "20"));
+console.log(myQuickJSAddon.myFunction(`function multiply(a, b) { return a * b; } \n`+
+`const d = new Date();\n`+
+// `console.log(1)`+
+`let result = multiply(32, 4); `+
+`js_native_addon(typeof '100x');`+
+`result;`, "20"));
 
 const result = myQuickJSAddon.processArgs(42,'s36s',6);
 console.log(result); 

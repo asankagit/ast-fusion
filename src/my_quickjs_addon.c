@@ -9,7 +9,7 @@ static JSValue js_native_addon(JSContext *ctx, JSValueConst this_val, int argc, 
     // Example: Print arguments received by the function
     for (int i = 0; i < argc; i++) {
         const char *str = JS_ToCString(ctx, argv[i]);
-        printf("Argument %d: %s\n", i + 1, str);
+        printf("js_native_addon arguments %d: %s\n", i + 1, str);
         JS_FreeCString(ctx, str);
     }
 
@@ -17,9 +17,10 @@ static JSValue js_native_addon(JSContext *ctx, JSValueConst this_val, int argc, 
     return JS_NewInt32(ctx, argc); // Return number of arguments received
 }
 
-static JSValue evaluateJavaScript(JSContext *ctx)
-{
-    const char *code = "function multiply(a, b) { return a * b; } \n const d = new Date();\n let result = multiply(32, 4); js_native_addon(result);result;";
+static JSValue evaluateJavaScript(JSContext *ctx, const char *code)
+{   
+    printf("pointer parsm: %s\n no etnd here", code);
+    // const char *code = "function multiply(a, b) { return a * b; } \n const d = new Date();\n let result = multiply(32, 4); js_native_addon(result);result;";
     return JS_Eval(ctx, code, strlen(code), "<input>", JS_EVAL_FLAG_STRICT);
 }
 
@@ -49,6 +50,7 @@ napi_value MyFunction(napi_env env, napi_callback_info info)
     // Assuming the arguments are strings, extract them using napi_get_value_string_utf8
     char arg1[100];
     char arg2[100];
+    char *arg3;
     size_t length;
 
     status = napi_get_value_string_utf8(env, argv[0], arg1, sizeof(arg1), &length);
@@ -65,10 +67,27 @@ napi_value MyFunction(napi_env env, napi_callback_info info)
         return NULL;
     }
 
-    // Do something with the arguments, e.g., print them
-    printf("Argument 1: %s\n", arg1);
-    printf("Argument 2: %s\n", arg2);
+    status = napi_get_value_string_utf8(env, argv[0], NULL, 0, &length);
+    if (status != napi_ok) {
+    // Handle error
+    }
 
+    arg3 = (char *)malloc(length + 1); // Allocate space for null terminator
+    if (arg3 == NULL) {
+    // Handle allocation failure
+    }
+
+    status = napi_get_value_string_utf8(env, argv[0], arg3, length + 1, NULL);
+    if (status != napi_ok) {
+    // Handle error
+        free(arg3); // Free memory even on error
+    }
+
+    // Do something with the arguments, e.g., print them
+    printf("Argument 1: %s\n", arg3);
+    // printf("Argument 2: %s\n", arg3);
+    // free(arg1);
+    // free(arg2);
     // Create QuickJS runtime and context
     JSRuntime *rt = JS_NewRuntime();
     JSContext *ctx = JS_NewContext(rt);
@@ -86,13 +105,16 @@ napi_value MyFunction(napi_env env, napi_callback_info info)
     JS_FreeValue(ctx, global_obj); 
 
     // Evaluate JavaScript code
-    JSValue jsResult = evaluateJavaScript(ctx);
+    JSValue jsResult = evaluateJavaScript(ctx, arg3);
   
 
     // Handle result and convert to N-API value
     // For simplicity, just create a string with the result
     const char *jsResultStr = JS_ToCString(ctx, jsResult);
     status = napi_create_string_utf8(env, jsResultStr, NAPI_AUTO_LENGTH, &result);
+
+    
+
     JS_FreeCString(ctx, jsResultStr);
     JS_FreeValue(ctx, jsResult);
 
