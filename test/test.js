@@ -45,3 +45,30 @@ const apiResponse =  myQuickJSAddon.callNodeFunction("https://api.example.com/da
 // }).catch(error => {
 //     console.error('Error:', error);
 // });
+
+
+const path = require('path');
+
+try {
+    // Try to load your addon
+    const astFusion = require('./build/Release/ast-fusion.node');
+    
+    console.log('✅ Addon loaded successfully!');
+    console.log('Available methods:', Object.keys(astFusion));
+    
+    // Try calling a method if any exist
+    if (Object.keys(astFusion).length > 0) {
+        console.log('Addon has exposed methods - QuickJS likely linked correctly');
+    } else {
+        console.log('⚠️  No methods exposed - check your addon implementation');
+    }
+    
+} catch (error) {
+    console.error('❌ Failed to load addon:');
+    console.error('Error:', error.message);
+    
+    if (error.message.includes('undefined symbol')) {
+        console.log('\n🔍 This suggests QuickJS symbols are missing (not linked properly)');
+        console.log('Check your binding.gyp configuration');
+    }
+}

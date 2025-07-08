@@ -3,11 +3,17 @@
     "version": "1.0.0",
     "description": "Node.js addon using QuickJS",
     "scripts": {
-        "build": "sh run.sh"
+        "build": "sh run.sh",
+        "rebuild": "node-gyp rebuild"
     },
     "gypfile": true,
     "dependencies": {
         "bindings": "^1.5.0",
         "node-addon-api": "^3.2.1"
-    }
+    },
+    "main": "index.js",
+    "files": [
+    "index.js",
+    "build/Release/ast-fusion.node"
+  ]
 }
